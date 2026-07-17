@@ -23,7 +23,7 @@ export default async (req) => {
     const suspect = (Date.now() - Number(ts)) < 8000;
 
     try {
-        await fetch(process.env.N8N_CSAT_WEBHOOK, {
+        const resp = await fetch(process.env.N8N_CSAT_WEBHOOK, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -31,8 +31,15 @@ export default async (req) => {
             },
             body: JSON.stringify({ id, vote: v, suspect }),
         });
+
+        if (!resp.ok) {
+            const bodyText = await resp.text();
+            // TEMPORARY DEBUG — remove once webhook delivery is confirmed working
+            return page(`Webhook call failed.<br><small>Status: ${resp.status}<br>URL used: ${process.env.N8N_CSAT_WEBHOOK}<br>Response: ${bodyText.slice(0, 300)}</small>`);
+        }
     } catch (e) {
-        return page("Something went wrong, but thanks for trying!");
+        // TEMPORARY DEBUG — remove once webhook delivery is confirmed working
+        return page(`Network error reaching n8n: ${e.message}<br><small>URL used: ${process.env.N8N_CSAT_WEBHOOK}</small>`);
     }
 
     return page(v === "yes" ? "Thanks for the feedback!" : "Thanks for the feedback!");
