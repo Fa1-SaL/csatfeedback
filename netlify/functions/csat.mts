@@ -18,7 +18,10 @@ export default async (req) => {
     const expected = crypto.createHmac("sha256", process.env.CSAT_SECRET)
         .update(`${id}.${v}.${ts}`).digest("hex").slice(0, 16);
 
-    if (sig !== expected) return page("Link looks invalid.");
+    if (sig !== expected) {
+        // TEMPORARY DEBUG OUTPUT — remove once the mismatch is found
+        return page(`Link looks invalid.<br><br><small>Debug — received: ${sig}<br>Debug — expected: ${expected}<br>Debug — signed string: ${id}.${v}.${ts}</small>`);
+    }
 
     const suspect = (Date.now() - Number(ts)) < 8000;
 
