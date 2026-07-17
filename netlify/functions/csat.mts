@@ -35,7 +35,7 @@ export default async (req) => {
         return page("Something went wrong, but thanks for trying!");
     }
 
-    return page(v === "yes" ? "Thanks for the feedback! 👍" : "Thanks for the feedback! 👎");
+    return page(v === "yes" ? "Thanks for the feedback!" : "Thanks for the feedback!");
 };
 
 export const config = { path: "/csat" };
